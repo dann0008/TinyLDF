@@ -1,7 +1,7 @@
 # Projet Données Massives & Cloud - Tiny LDF
 ## Lucas Danneaux - URL du Projet : https://tiny-ldf.oa.r.appspot.com/
 
-## Avancememnt du projet
+## Avancement du projet
 ### Fonctionnel
 
 - Mise en place du projet sur une machine distance dédié
@@ -15,6 +15,7 @@
 - Pas de Pagination
 - Pas de mise en page supplementaire
 
+## Réalisation du Projet
 #### Commande exécuté dans le cloud shell
 - `mvn -v`
 - `gcloud init`
