@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insertion de Quad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<script src="https://unpkg.com/mithril/mithril.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</head>
+<body>
+
+<script>
+
+var Insert={
+sujet : "Sujet",
+predicat : "Predicat",
+objet : "Objet",
+contexte : "Contexte",
+login: false,
+
+quad: function() {
+	Quad.insert(this.sujet, this.predicat, this.objet, this.contexte);
+}
+}
+
+var InsertView={
+	view: function() {
+		return m('div', [
+			m('div',{class: 'subtitle'}, "Insérer le Quad ici"),
+			m('button',{
+				class: 'button is-link',
+				onclick: function(e) {Insert.quad()}
+				},"Insertion Test"),
+
+		])
+	}
+}
+
+var Quad = {
+		insert: function(sujet,predicat,objet,contexte) {
+			const urlapi = `${window.location.origin}/_ah/api/myApi/v1/insertQuad?sujet=${encodeURIComponent(sujet)}&predicat=${encodeURIComponent(predicat)}&objet=${encodeURIComponent(objet)}&contexte=${encodeURIComponent(contexte)}`;
+			return m.request({
+				method: "GET",
+				url: urlapi
+			})
+			.then(function(result) {
+				console.log("got:",result);
+			})
+			.catch(function(error) {
+				console.log("Error:", error);
+			});
+		}
+	}
+
+var Hello = {
+view: function() {
+	return m('div', {class:'container'}, [
+		m("h1", {class: 'title'}, 'Insertion de QUAD'),
+		m('div', {id: 'g_id_onload', 
+				  'data-client_id': '447910301446-hjuoc3sir08st1o49jgu06p1d3ajq4v8.apps.googleusercontent.com',
+				  'data-callback': 'handleCredentialResponse'}),
+		m('div', {class: 'g_id_signin', 'data-type': 'standard'}),
+		m('div',{class: 'tile is-ancestor'},[
+			m("div", {class: 'tile'}, m('div',{class:'tile is-child box'},m(InsertView))),
+		])
+	])
+}
+}
+
+function handleCredentialResponse(response) {
+	console.log("callback called:"+response.credential);
+	const responsePayload = jwt_decode(response.credential);
+	Insert.login = true;
+	m.redraw();
+}
+
+m.mount(document.body, Hello)	
+
+</script>
+</body>
+</html>
