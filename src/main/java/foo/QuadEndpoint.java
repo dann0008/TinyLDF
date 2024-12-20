@@ -1,10 +1,10 @@
 package foo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import com.google.api.server.spi.auth.common.User;
 import com.google.api.server.spi.config.Api;
@@ -39,8 +39,7 @@ import com.google.appengine.api.datastore.Transaction;
 @Api(name = "myApi",
      version = "v1",
      audiences = "968589437184-jgpthic1akkqc22oou6va57mvvq1nkcb.apps.googleusercontent.com",
-  	 clientIds = {"968589437184-jgpthic1akkqc22oou6va57mvvq1nkcb.apps.googleusercontent.com",
-        "968589437184-jgpthic1akkqc22oou6va57mvvq1nkcb.apps.googleusercontent.com"},
+  	 clientIds = {"968589437184-jgpthic1akkqc22oou6va57mvvq1nkcb.apps.googleusercontent.com"},
      namespace =
      @ApiNamespace(
 		   ownerDomain = "helloworld.example.com",
@@ -73,4 +72,40 @@ public class QuadEndpoint {
 
 		return quad;
     }
+
+	@ApiMethod(name = "selectQuad", path = "selectQuad", httpMethod = HttpMethod.GET)
+	public CollectionResponse<Entity> selectQuad(@Nullable @Named("sujet") String sujet, @Nullable @Named("predicat") String predicat, @Nullable @Named("objet") String objet, @Nullable @Named("contexte") String contexte) {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("Quad");
+		List<Query.Filter> filters = new ArrayList<>();
+	
+		if (sujet != null && !sujet.isEmpty()) {
+			filters.add(new Query.FilterPredicate("sujet", Query.FilterOperator.EQUAL, sujet));
+		}
+		if (predicat != null && !predicat.isEmpty()) {
+			filters.add(new Query.FilterPredicate("predicat", Query.FilterOperator.EQUAL, predicat));
+		}
+		if (objet != null && !objet.isEmpty()) {
+			filters.add(new Query.FilterPredicate("objet", Query.FilterOperator.EQUAL, objet));
+		}
+		if (contexte != null && !contexte.isEmpty()) {
+			filters.add(new Query.FilterPredicate("contexte", Query.FilterOperator.EQUAL, contexte));
+		}
+		if (!filters.isEmpty()) {
+			Query.Filter compositeFilter;
+			if (filters.size() == 1) {
+				compositeFilter = filters.get(0);
+			} else {
+				compositeFilter = Query.CompositeFilterOperator.and(filters);
+			}
+			query.setFilter(compositeFilter);
+		}
+
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(30);
+		QueryResultList<Entity> results = preparedQuery.asQueryResultList(fetchOptions);
+		
+		return CollectionResponse.<Entity>builder().setItems(results).build();
+	}
 }
+

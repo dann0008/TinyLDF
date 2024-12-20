@@ -26,19 +26,19 @@ quad: function() {
     const contexte = document.getElementById("contexte2").value.trim();
 
                   if (!sujet) {
-                    alert("The 'sujet' field cannot be empty");
+                    alert("Le sujet doit être renseigné");
                     return;
                   }
                   if (!predicat) {
-                    alert("The 'predicat' field cannot be empty");
+                    alert("Le predicat doit être renseigné");
                     return;
                   }
                   if (!objet) {
-                    alert("The 'objet' field cannot be empty");
+                    alert("L'objet doit être renseigné");
                     return;
                   }
                   if (!contexte) {
-                    alert("The 'contexte' field cannot be empty");
+                    alert("Le contexte doit être renseigné");
                     return;
                   }
 	Quad.insert(sujet, predicat, objet, contexte);
@@ -48,6 +48,9 @@ quad: function() {
 var InsertView={
 	view: function() {
 		return m('div', [
+    Insert.login ? 
+        		m('label', {class: 'label'}, `Vous êtes bien identifié`) :
+        		m('label', {class: 'label'}, "Vous devez vous connecter pour continuer"),
 			m('div',{class: 'subtitle'}, "Insérer le Quad ici"),
 			[
                 m('fieldset', [
@@ -72,13 +75,13 @@ var InsertView={
                 ]),
                 m('button',{
 				class: 'button is-link',
+        disabled: !Insert.login,
 				onclick: function(e) {Insert.quad()}
 				},"Insertion du Quad")
       ]
     ])
   }
 }
-          
 
 var Quad = {
 		insert: function(sujet,predicat,objet,contexte) {

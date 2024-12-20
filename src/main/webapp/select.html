@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insertion de Quad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<script src="https://unpkg.com/mithril/mithril.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+
+</head>
+<body>
+
+<script>
+var Select = {
+results: [],
+quad : function() {
+          const sujet = document.getElementById("sujet2").value.trim();
+          const predicat = document.getElementById("predicat2").value.trim();
+          const objet = document.getElementById("objet2").value.trim();
+          const contexte = document.getElementById("contexte2").value.trim();
+          Quad.select(sujet, predicat, objet, contexte);
+}
+}
+var SelectView = { 
+
+view: function(){
+  return m('div', [
+    m('div',{class: 'subtitle'}, "Selectionner des QUAD ici"),
+    [
+          m('fieldset', [
+              m('ul', [
+                  m('li', { resource: "#sujet" }, [
+                      m('label', { for: "sujet2", about: "#sujet2" }, 'sujet :'),
+                      m('input', { class: "uri", id: "sujet2", name: "sujet2", about: "sujet2", resource: "rdf:sujet" })
+                  ]),
+                  m('li', { resource: "#predicat" }, [
+                      m('label', { for: "predicat2", about: "#predicat2" }, 'predicat :'),
+                      m('input', { class: "uri", id: "predicat2", name: "predicat2", about: "predicat2", resource: "rdf:predicat" })
+                  ]),
+                  m('li', { resource: "#objet" }, [
+                      m('label', { for: "objet2", about: "#objet2" }, 'objet :'),
+                      m('input', { class: "uri", id: "objet2", name: "objet2", about: "objet2", resource: "rdf:objet" })
+                  ]),
+                  m('li', { resource: "#contexte" }, [
+                      m('label', { for: "contexte2", about: "#contexte2" }, 'contexte :'),
+                      m('input', { class: "uri", id: "contexte2", name: "contexte2", about: "contexte2", resource: "rdf:contexte" })
+                  ])
+              ])
+          ]),
+          m('button',{
+				class: 'button is-link',
+				onclick: function(e) {Select.quad()}
+				},"Rechercher les QUAD correspondant")
+                ]
+    ])
+  }
+}
+
+var Quad = {
+  select: function(sujet, predicat, objet, contexte) {
+    let apiUrl = `${window.location.origin}/_ah/api/myApi/v1/selectQuad?`;      
+    const params = new URLSearchParams();
+    if (sujet) params.append('sujet', sujet);
+    if (predicat) params.append('predicat', predicat);
+    if (objet) params.append('objet', objet);
+    if (contexte) params.append('contexte', contexte);
+    
+    apiUrl += params.toString();
+    return m.request({
+            method: 'GET',
+            url: apiUrl
+          })
+            .then(function (response) {
+              console.log("Response:", response);
+              Select.results = response.items || [];
+              m.redraw();
+            })
+            .catch(function (error) {
+              console.error("Error:", error);
+            });
+        }
+}
+
+var Hello = {
+view: function() {
+	return m('div', {class:'container'}, [
+		m("h1", {class: 'title'}, 'Selection de QUAD'),
+		m('div',{class: 'tile is-ancestor'},[
+			m("div", {class: 'tile'}, m('div',{class:'tile is-child box'},m(SelectView))),
+		])
+	])
+}
+}
+
+m.mount(document.body, Hello)
+
+</script>
+</body>
+</html>
