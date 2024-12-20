@@ -16,29 +16,69 @@
 <script>
 
 var Insert={
-sujet : "Sujet",
-predicat : "Predicat",
-objet : "Objet",
-contexte : "Contexte",
 login: false,
 
+
 quad: function() {
-	Quad.insert(this.sujet, this.predicat, this.objet, this.contexte);
+	const sujet = document.getElementById("sujet2").value.trim();
+    const predicat = document.getElementById("predicat2").value.trim();
+    const objet = document.getElementById("objet2").value.trim();
+    const contexte = document.getElementById("contexte2").value.trim();
+
+                  if (!sujet) {
+                    alert("The 'sujet' field cannot be empty");
+                    return;
+                  }
+                  if (!predicat) {
+                    alert("The 'predicat' field cannot be empty");
+                    return;
+                  }
+                  if (!objet) {
+                    alert("The 'objet' field cannot be empty");
+                    return;
+                  }
+                  if (!contexte) {
+                    alert("The 'contexte' field cannot be empty");
+                    return;
+                  }
+	Quad.insert(sujet, predicat, objet, contexte);
 }
-}
+} 
 
 var InsertView={
 	view: function() {
 		return m('div', [
 			m('div',{class: 'subtitle'}, "Insérer le Quad ici"),
-			m('button',{
+			[
+                m('fieldset', [
+                  m('ul', [
+                    m('li', { resource: "#sujet" }, [
+                      m('label', { for: "sujet2", about: "#sujet2" }, 'sujet :'),
+                      m('input', { class: "uri", id: "sujet2", name: "sujet2", about: "sujet2", resource: "rdf:sujet" })
+                    ]),
+                    m('li', { resource: "#predicat" }, [
+                      m('label', { for: "predicat2", about: "#predicat2" }, 'predicat :'),
+                      m('input', { class: "uri", id: "predicat2", name: "predicat2", about: "predicat2", resource: "rdf:predicat" })
+                    ]),
+                    m('li', { resource: "#objet" }, [
+                      m('label', { for: "objet2", about: "#objet2" }, 'objet :'),
+                      m('input', { class: "uri", id: "objet2", name: "objet2", about: "objet2", resource: "rdf:objet" })
+                    ]),
+                    m('li', { resource: "#contexte" }, [
+                      m('label', { for: "contexte2", about: "#contexte2" }, 'contexte :'),
+                      m('input', { class: "uri", id: "contexte2", name: "contexte2", about: "contexte2", resource: "rdf:contexte" })
+                    ]),
+                  ])
+                ]),
+                m('button',{
 				class: 'button is-link',
 				onclick: function(e) {Insert.quad()}
-				},"Insertion Test"),
-
-		])
-	}
+				},"Insertion du Quad")
+      ]
+    ])
+  }
 }
+          
 
 var Quad = {
 		insert: function(sujet,predicat,objet,contexte) {
@@ -61,7 +101,7 @@ view: function() {
 	return m('div', {class:'container'}, [
 		m("h1", {class: 'title'}, 'Insertion de QUAD'),
 		m('div', {id: 'g_id_onload', 
-				  'data-client_id': '447910301446-hjuoc3sir08st1o49jgu06p1d3ajq4v8.apps.googleusercontent.com',
+				  'data-client_id': '968589437184-jgpthic1akkqc22oou6va57mvvq1nkcb.apps.googleusercontent.com',
 				  'data-callback': 'handleCredentialResponse'}),
 		m('div', {class: 'g_id_signin', 'data-type': 'standard'}),
 		m('div',{class: 'tile is-ancestor'},[
